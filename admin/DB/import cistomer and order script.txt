@@ -1,0 +1,29 @@
+/* import costomer script*/
+SELECT u.id AS customer_id,case  when u.username="" then u.email ELSE username END as username ,
+case  when u.status="active" then 1 ELSE 0 END as status ,
+u.email AS email,PASSWORD, concat(lname,'',fname) AS full_name, telephone  AS  contact_no, ifnull(l.total_loyalty_point,0) loyalty_point
+FROM btr_userlogin u
+LEFT JOIN 
+(
+	SELECT (in_lp-out_lp) total_loyalty_point, customer_id
+	from ( 
+		SELECT  dbid as customer_id, 
+		SUM(case when `type`='in' then credits ELSE 0 END) AS in_lp, 
+		SUM(case when `type`='out' then credits ELSE 0 END) AS out_lp 
+		FROM btr_loyalties l GROUP by dbid
+	)A
+) l ON l.customer_id = u.id
+
+/*
+foreach customer 
+ insert old customer's info into new customer table
+ find the orders of the the customer
+*/
+
+
+SELECT uo.orderid as order_number,  `status`, total,payment_used , OrderDate, o.tax, Product, ProductChooseValue, Qty, Summ
+FROM btr_userorders uo
+LEFT JOIN  ast_orders o ON o.OrderID=uo.orderid
+LEFT JOIN ast_order_lines l ON l.OrderID=uo.orderid 
+WHERE dbid='1384'
+
