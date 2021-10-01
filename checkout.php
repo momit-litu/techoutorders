@@ -1043,7 +1043,7 @@ include 'views/layout/footer_files.php';
 		var pickup_date_time= $('#pickup_date_time').val();
 		pickup_date_time_arr = pickup_date_time.split(' ');
 		pickup_time_arr = pickup_date_time_arr[1].split(":");
-		pickup_hour = (pickup_date_time_arr[2]=="PM")?(parseInt(pickup_time_arr[0])+12):pickup_time_arr[0];
+		pickup_hour = (pickup_date_time_arr[2]=="PM")?((parseInt(pickup_time_arr[0])<12)?(parseInt(pickup_time_arr[0])+12):parseInt(pickup_time_arr[0])):pickup_time_arr[0];
 		pickup_date_time = pickup_date_time_arr[0]+" "+pickup_hour+":"+pickup_time_arr[1];
 
         var usaTime = new Date(Date.parse(pickup_date_time));
@@ -1191,10 +1191,10 @@ include 'views/layout/footer_files.php';
 			var pickup_date_time= $('#pickup_date_time').val();
 			pickup_date_time_arr = pickup_date_time.split(' ');
 			pickup_time_arr = pickup_date_time_arr[1].split(":");
-			pickup_hour = (pickup_date_time_arr[2]=="PM")?(parseInt(pickup_time_arr[0])+12):pickup_time_arr[0];
+			pickup_hour = (pickup_date_time_arr[2]=="PM")?((parseInt(pickup_time_arr[0])<12)?(parseInt(pickup_time_arr[0])+12):parseInt(pickup_time_arr[0])):pickup_time_arr[0];
 			pickup_date_time = pickup_date_time_arr[0]+" "+pickup_hour+":"+pickup_time_arr[1];
 			formData.set("pickup_date_time",pickup_date_time);
-			$('#checkout_submit').attr('disabled','disabled');
+			$('#pre-loader').delay(1000).toggle();
 			$.ajax({
                 url: "includes/controller/ecommerceController.php",
                 type:'POST',
@@ -1205,6 +1205,7 @@ include 'views/layout/footer_files.php';
                 success: function(data){
 					data = $.trim(data).replace(/(^[ \t]*\n)/gm, "");
                     if(data==0 || data.substring(0, 2)!="LB"){
+						 $('#pre-loader').toggle();
 						success_or_error_msg('#logn_reg_error',"danger","Order failed. please check your information properly. You should refresh the page and try again","#checkout_submit" );
                     }
                     else{
